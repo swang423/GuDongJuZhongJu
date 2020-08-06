@@ -2,17 +2,18 @@
  * 
  */
 import java.io.File;
+import java.util.Scanner;
 import java.util.ArrayList;
 /**
  * @author Root
  *
  */
 public class Board {
-
+	public static final int NUM_PLAYERS = 8;
+	public static final int NUM_ROUNDS = 3;
+	private Player[] players = new Player[NUM_PLAYERS];
+	private Round[] rounds = new Round[NUM_ROUNDS];
 	public Board() {
-		//TODO players
-		//TODO rounds
-		//TODO antiques
 	}
 	
 	/**
@@ -21,7 +22,15 @@ public class Board {
 	 * @return true if successful
 	 */
 	public boolean init() {
-		
+		Scanner queryBot = new Scanner( System.in );
+		for (int i = 0 ; i < NUM_PLAYERS; i++) {
+			System.out.println("Enter name for player #"+(i+1));
+			String playerName = queryBot.next();
+			players[i] = new Player(playerName);
+		}
+		for (int i = 0 ; i < NUM_ROUNDS; i++) {
+			rounds[i] = new Round(i);
+		}
 		return false;
 	}
 	
@@ -31,8 +40,11 @@ public class Board {
 	 * @return the id of the last player
 	 */
 	public int startRound(int idRound, int idFirstPlayer) {
-		Round myRound = new Round(idRound);
-		return -1;
+		int nextPlayer = idFirstPlayer;
+		for (int i = 0; i < NUM_PLAYERS; i++) {
+			nextPlayer = rounds[idRound].actNext(nextPlayer);
+		}
+		return nextPlayer;
 	}
 	/**
 	 * win-lose verdict
@@ -41,7 +53,15 @@ public class Board {
 	public boolean isGoodWin() {
 		return false;
 	}
-	
+	/**
+	 * debug method or called at the end to reveal the groundtruth of all antiques
+	 */
+	public void revealAntiqueGroundTruth() {
+		System.out.println("TODO");
+	}
+	public void revealPlayerGroundTruth() {
+		System.out.println("TODO");
+	}
 	/**
 	 * @param args
 	 */
