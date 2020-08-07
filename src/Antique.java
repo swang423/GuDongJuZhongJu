@@ -15,20 +15,18 @@ public class Antique {
 		this.name = name;
 		this.tag = tag;
 		this.isReal = isReal;
+		this.showReal = isReal;
 	}
+
 	/**
-	 * Called initially
-	 * @param val 
+	 * Called when LaoChaoFeng flips its identity
+	 * @param val: what val to show to good people
 	 */
-	public void setIdentity(boolean val) {
-		isReal = val;
-		showReal = val;
-	}
-	public void setShow(boolean val) {
-		showReal = val;
+	public void reverseShow() {
+		showReal = !this.isReal;
 	}
 	/**
-	 * Called when YaoBuRan acts on this antique
+	 * Called when ZhenGuoQu acts on this antique
 	 */
 	public void hide() {
 		isHidden = true;
@@ -41,6 +39,9 @@ public class Antique {
 	}
 	public boolean isHidden() {
 		return isHidden;
+	}
+	public String getName() {
+		return name+tag;
 	}
 	private String tag;	//J,Q,K
 	private String name;	//c,d,h,s

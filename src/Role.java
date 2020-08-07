@@ -1,4 +1,4 @@
-
+//This class is not used.
 public class Role {
 	
 	public Role(String gameName) {
@@ -28,4 +28,5 @@ public class Role {
 	//private int[] coins = new int[] {2,2,2};
 	private boolean isGood;	//if the player belongs to the good camp
 }
+
 
