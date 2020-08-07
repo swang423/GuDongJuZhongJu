@@ -84,7 +84,7 @@ public class Round {
 	}
 	//debug method to display table
 	public void printSeq() {
-		for(int i = 0 ; i < NUM_ANTIQUES;i++) {
+		for(int i = 0 ; i < numPlayer;i++) {
 			System.out.print(this.player_seq[i]+" ");
 		}
 		System.out.println();
@@ -139,6 +139,10 @@ public class Round {
 			score ++;
 		if(table[idx_2].getIdentity())
 			score ++;
+		System.out.print("The final votes are:\n[ ");
+		for (int i = 0 ; i<NUM_ANTIQUES; i++)
+			System.out.print(vote[i]+" ");
+		System.out.println("].");
 		System.out.println("["+table[idx_2].getName()+"] receives the second highest votes of "+val_2 +" coins");
 		System.out.println("["+table[idx_2].getName()+"] is "+table[idx_2].getIdentity());
 		System.out.println("-- End of round "+id+" --");

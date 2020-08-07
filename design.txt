@@ -2,7 +2,6 @@ IO can be a class
 1-based for user input/output
 load and save
 
-XuYuan is not attacked as Fangzhen is attacked
-attack is not reset
-diplay voting results ([5 3 1 0])
+
 identify leaders
+fake query for huangyanyan and muhujianai if freeze

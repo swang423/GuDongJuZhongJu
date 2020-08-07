@@ -12,8 +12,10 @@ import java.util.Scanner;
 public class Board {
 	public static final int NUM_PLAYERS = 6;
 	public static final int NUM_ROUNDS = 3;
+	public static final int NUM_ANTIQUES = 4;
 	private Player[] players = new Player[NUM_PLAYERS];
 	private Round[] rounds = new Round[NUM_ROUNDS];
+	private int goodScore = 0;
 	public Board() {
 	}
 	
@@ -99,11 +101,12 @@ public class Board {
 			System.out.println("-----------------------");
 			System.out.println("You are "+players[nextPlayer].getRole());
 			if(!players[nextPlayer].isAttacked()) {
-				players[nextPlayer].setAttack(false);
+				
 				boolean can_check_antique = players[nextPlayer].act_special_skill(rounds[idRound],players);
 				if(can_check_antique)
 					players[nextPlayer].act_check_antique(rounds[idRound]);
-			}
+			}else
+				players[nextPlayer].setAttack(false);
 			if(i<NUM_PLAYERS-1)
 				nextPlayer = players[nextPlayer].act_choose_next_player(rounds[idRound]);
 		}
@@ -117,20 +120,41 @@ public class Board {
 		System.out.println("Get ready to vote!");
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 			//nextPlayer = rounds[idRound].actNext(nextPlayer);
-			int [] vote = players[i].vote();
+			int [] vote = {0,0,0,0};
+			try {
+				vote = players[i].vote();
+			}catch(IncorrectVotesException e) {
+				System.out.println("Can't parse input "+e+" into 4 integers");
+			}
 			rounds[idRound].updateVote(vote);
 		}
-		rounds[idRound].getScore();
+		goodScore += rounds[idRound].getScore();
 		return rounds[idRound].getLastPlayer();
 		
 		
+	}
+	/**
+	 * Can use to add up to 4 points if
+	 * 1. (2 pts) XuYuan was not found by LaoChaoFeng
+	 * 2. (1 pt) FangZhen was not found by YaoBuRan
+	 * 3. (1 pt) Good guys vote out LaoChaoFeng correctly
+	 * @param p points from 0 to 4
+	 */
+	public void addtionalPoints() {
+		Scanner queryBot = new Scanner( System.in );
+		System.out.println("Input additional points for good guys [0-4]:");
+		int p = Integer.parseInt(queryBot.nextLine());
+		goodScore += p;
+	}
+	public int getScore() {
+		return this.goodScore;
 	}
 	/**
 	 * win-lose verdict
 	 * @return true if the good guys win
 	 */
 	public boolean isGoodWin() {
-		return false;
+		return goodScore>=6;
 	}
 	/**
 	 * debug method or called at the end to reveal the groundtruth of all antiques
@@ -157,6 +181,8 @@ public class Board {
 			System.out.println((i+1)+"] is ["+(id_next_round_start+1)+"].");
 			id_next_round_start = my_board.startRound(i,id_next_round_start);
 		}
+		System.out.println("Good guys win "+my_board.getScore()+ " in inspections.");
+		my_board.addtionalPoints();
 		boolean is_good_win = my_board.isGoodWin();
 		System.out.print("Congrats to ");
 		System.out.print(is_good_win?"good":"bad");

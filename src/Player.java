@@ -1,5 +1,5 @@
 import java.util.Scanner;
-
+import java.io.IOException;
 
 public class Player {
 	public Player(int id) {
@@ -86,14 +86,30 @@ public class Player {
 	 * This is called when each player's vote is tallied
 	 * @return
 	 */
-	public int[] vote() {
+	public int[] vote() throws IncorrectVotesException {
 		this.coins += 2;
 		int[] res = {0,0,0,0};
 		while(true) {
 			int sum = 0;
+			/*
 			for(int i = 0; i<NUM_ANTIQUES;i++) {
 				System.out.println("Please enter the vote of player ["+this.myID+"] on antique ["+i+"] as one by one #. ");
 				res[i] = Integer.parseInt(queryBot.nextLine());
+				sum += res[i];
+			}
+			*/
+			System.out.println("Please enter the vote of player ["+this.myID+"] on as four integers:");
+			System.out.println("Press enter to vote nothing");
+			String votes_str = queryBot.nextLine();
+			if(votes_str.equals(""))
+				return res;
+			String[] votes_vec = votes_str.split(" ");
+			if(votes_vec.length!=NUM_ANTIQUES) {
+				throw new IncorrectVotesException(votes_str);
+			}
+			
+			for (int i=0; i<NUM_ANTIQUES;i++) {
+				res[i] = Integer.parseInt(votes_vec[i]);
 				sum += res[i];
 			}
 			if(sum>this.coins) {

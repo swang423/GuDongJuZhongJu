@@ -32,10 +32,12 @@ public class Player_Bad_YaoBuRan extends Player{
 			if(confirm.equals("y"))	break;
 		}
 		players[playerID].setAttack(true);
-		if(players[playerID].getRole()==GameRole.FangZhen) {
+		if(players[playerID].getRole().equals(GameRole.FangZhen)){
+			System.out.println("DEBUG ### JAJAJA ### GOT YOU ####");
 			for(int ii = 0; ii < players.length;ii++) {
-				if(players[playerID].getRole()==GameRole.XuYuan) {
+				if(players[ii].getRole().equals(GameRole.XuYuan)){
 					players[ii].setAttack(true);
+					System.out.println("DEBUG ### HAHAHA ### GOT YOU ####");
 					break;
 				}
 			}
