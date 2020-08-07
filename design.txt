@@ -1,7 +1,2 @@
 IO can be a class
-1-based for user input/output
 load and save
-
-
-identify leaders
-fake query for huangyanyan and muhujianai if freeze

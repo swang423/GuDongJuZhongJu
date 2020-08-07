@@ -85,7 +85,7 @@ public class Round {
 	//debug method to display table
 	public void printSeq() {
 		for(int i = 0 ; i < numPlayer;i++) {
-			System.out.print(this.player_seq[i]+" ");
+			System.out.print((this.player_seq[i]+1)+" ");
 		}
 		System.out.println();
 	}
@@ -121,7 +121,7 @@ public class Round {
 	 */
 	public int getScore() {
 		int score = 0;
-		Arrays.sort(this.vote);
+		//Arrays.sort(this.vote);
 		int idx_1 = 0,idx_2 = 0;
 		int val_1 = vote[0],val_2 = vote[0];
 		for (int i = 1; i < NUM_ANTIQUES; i++) {

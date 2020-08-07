@@ -25,12 +25,16 @@ public class Player_Good_JiYunFu extends Player{
 			System.out.println(ATTACK_MSG);
 			return false;
 		}
-		int antiqueID;
+		int antiqueID = -1;
 		while(true) {
-			System.out.println("Enter id of the antique to check [0-3]:");
-			antiqueID =  Integer.parseInt(queryBot.nextLine());
-			if(antiqueID<0 || antiqueID>3) {
-				System.out.println("Illegal id:"+antiqueID+". Try again.");
+			System.out.println("Enter id of the antique to check [1-4]:");
+			try {
+				antiqueID =  Integer.parseInt(queryBot.nextLine())-1;
+			}catch (NumberFormatException e) {
+				continue;
+			}
+			if(antiqueID<0 || antiqueID>=NUM_ANTIQUES) {
+				System.out.println("Illegal id:"+(antiqueID+1)+". Try again.");
 				continue;
 			}
 			System.out.println("[y] to confirm,[n] to redo");

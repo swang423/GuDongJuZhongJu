@@ -24,12 +24,16 @@ public class Player {
 	 * @param round: the id of the table, [0,1,2]
 	 */
 	public void act_check_antique(Round round) {
-		int antiqueID;
+		int antiqueID = -1;
 		while(true) {	
-			System.out.println("Enter id of the antique to check [0-3]:");
-			antiqueID =  Integer.parseInt(queryBot.nextLine());
-			if(antiqueID<0 || antiqueID>3) {
-				System.out.println("Illegal id:"+antiqueID+". Try again.");
+			System.out.println("Enter id of the antique to check [1-4]:");
+			try {
+				antiqueID =  Integer.parseInt(queryBot.nextLine())-1;
+			}catch (NumberFormatException e) {
+				continue;
+			}
+			if(antiqueID<0 || antiqueID>=NUM_ANTIQUES) {
+				System.out.println("Illegal id:"+(antiqueID+1)+". Try again.");
 				continue;
 			}
 			System.out.println("[y] to confirm,[n] to redo");
@@ -64,16 +68,21 @@ public class Player {
 	 * @return the id of the player to play next (0-based)
 	 */
 	public int act_choose_next_player(Round round) {
-		int playerID;
+		int playerID = -1;
+		int num_players = round.getNumPlayer();
 		while(true) {
-			System.out.println("Enter ID for the next player #:");
-			playerID = Integer.parseInt(queryBot.nextLine());
-			if(playerID<0 || playerID>round.getNumPlayer()){
-				System.out.println("Illegal player id:"+playerID+". Try again.");
+			System.out.println("Enter ID for the next player # [1-"+num_players+"]:");
+			try {
+				playerID = Integer.parseInt(queryBot.nextLine())-1;
+			}catch (NumberFormatException e) {
+				continue;
+			}
+			if(playerID<0 || playerID>=num_players){
+				System.out.println("Illegal player id:"+(playerID+1)+". Try again.");
 				continue;
 			}
 			if (round.hasActed(playerID)) {
-				System.out.println("Player id "+playerID+" has acted.");
+				System.out.println("Player id "+(playerID+1)+" has acted.");
 				continue;
 			}
 			System.out.println("[y] to confirm,[n] to redo");
@@ -86,11 +95,13 @@ public class Player {
 	 * This is called when each player's vote is tallied
 	 * @return
 	 */
-	public int[] vote() throws IncorrectVotesException {
+	public int[] vote()  {
 		this.coins += 2;
 		int[] res = {0,0,0,0};
 		while(true) {
 			int sum = 0;
+			for (int i = 0; i<NUM_ANTIQUES; i++)
+				res[i] = 0;
 			/*
 			for(int i = 0; i<NUM_ANTIQUES;i++) {
 				System.out.println("Please enter the vote of player ["+this.myID+"] on antique ["+i+"] as one by one #. ");
@@ -98,19 +109,31 @@ public class Player {
 				sum += res[i];
 			}
 			*/
-			System.out.println("Please enter the vote of player ["+this.myID+"] on as four integers:");
+			System.out.println("Please enter the vote of player ["+(this.myID+1)+"] on as four integers:");
 			System.out.println("Press enter to vote nothing");
 			String votes_str = queryBot.nextLine();
-			if(votes_str.equals(""))
+			if(votes_str.equals("")) 
 				return res;
+				
 			String[] votes_vec = votes_str.split(" ");
 			if(votes_vec.length!=NUM_ANTIQUES) {
-				throw new IncorrectVotesException(votes_str);
+				//throw new IncorrectVotesException(votes_str);
+				System.out.println("Your response is not recorded. Enter again");
+				System.out.println("Format it as 0 0 0 0");
+				continue;
 			}
-			
+			boolean negative_vote = false;
 			for (int i=0; i<NUM_ANTIQUES;i++) {
 				res[i] = Integer.parseInt(votes_vec[i]);
+				if(res[i] < 0) {
+					negative_vote = true;
+					break;
+				}
 				sum += res[i];
+			}
+			if(negative_vote) {
+				System.out.print("Error: You can't vote with negative numbers.");
+				continue;
 			}
 			if(sum>this.coins) {
 				System.out.print("Error: You only have "+this.coins+" coins left");
@@ -121,10 +144,12 @@ public class Player {
 			for(int i = 0; i<NUM_ANTIQUES;i++) {
 				System.out.print(res[i]+" ");
 			}
-			System.out.println("] for player "+this.myID+".");
+			System.out.println("] for player "+(this.myID+1)+".");
 			System.out.println("Please enter [y] to confirm, [n] to redo");
-			if(queryBot.nextLine().equals("y"))
+			if(queryBot.nextLine().equals("y")) {
+				this.coins -= sum;
 				break;
+			}
 		}
 		return res;
 	}

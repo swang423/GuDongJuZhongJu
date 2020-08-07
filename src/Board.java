@@ -13,8 +13,10 @@ public class Board {
 	public static final int NUM_PLAYERS = 6;
 	public static final int NUM_ROUNDS = 3;
 	public static final int NUM_ANTIQUES = 4;
+	
 	private Player[] players = new Player[NUM_PLAYERS];
 	private Round[] rounds = new Round[NUM_ROUNDS];
+	private Utils_Pauser pauser;
 	private int goodScore = 0;
 	public Board() {
 	}
@@ -24,7 +26,7 @@ public class Board {
 	 * @param args
 	 * @return true if successful
 	 */
-	public boolean init() {
+	public void init() {
 		//Scanner queryBot = new Scanner( System.in );
 		GameRole[] roles = GameRole.getRandomRoles(NUM_PLAYERS);
 		
@@ -66,10 +68,7 @@ public class Board {
 				id_bad2_YaoBuRan = i+1;
 			players[i].assignRole(roles[i]);
 		}
-		assert(id_bad1_LaoChaoFeng>0);
-		assert(id_bad2_YaoBuRan>0);
-		System.out.print("Please inform player ["+ id_bad1_LaoChaoFeng);
-		System.out.println("] and ["+id_bad2_YaoBuRan+"] are teammates.");
+		
 		for (int i = 0 ; i < NUM_ROUNDS; i++) {
 			rounds[i] = new Round(i+1,NUM_PLAYERS);
 			//TODO debug
@@ -77,7 +76,14 @@ public class Board {
 		}
 		//save log
 		revealPlayerGroundTruth();
-		return false;
+		pauser = new Utils_Pauser();
+		pauser.fakeClear();
+		assert(id_bad1_LaoChaoFeng>0);
+		assert(id_bad2_YaoBuRan>0);
+		System.out.print("Please inform player ["+ id_bad1_LaoChaoFeng);
+		System.out.println("] and ["+id_bad2_YaoBuRan+"] are teammates.");
+		pauser.pause();
+		pauser.fakeClear();
 	}
 	
 	/**
@@ -96,7 +102,8 @@ public class Board {
 	public int startRound(int idRound, int idFirstPlayer) {
 		int nextPlayer = idFirstPlayer;
 		for (int i = 0; i < NUM_PLAYERS; i++) {
-			//nextPlayer = rounds[idRound].actNext(nextPlayer);
+			System.out.println("Next player is "+(nextPlayer+1));
+			pauser.pause();
 			rounds[idRound].updateSeq(i,nextPlayer);
 			System.out.println("-----------------------");
 			System.out.println("You are "+players[nextPlayer].getRole());
@@ -107,9 +114,13 @@ public class Board {
 					players[nextPlayer].act_check_antique(rounds[idRound]);
 			}else
 				players[nextPlayer].setAttack(false);
-			if(i<NUM_PLAYERS-1)
+			if(i<NUM_PLAYERS-1) {
 				nextPlayer = players[nextPlayer].act_choose_next_player(rounds[idRound]);
+				pauser.fakeClear();
+			}
 		}
+		pauser.pause();
+		pauser.fakeClear();
 		System.out.println("Action sequence:");
 		rounds[idRound].printSeq();
 		//start discussion from the left of the last player
@@ -120,13 +131,9 @@ public class Board {
 		System.out.println("Get ready to vote!");
 		for (int i = 0; i < NUM_PLAYERS; i++) {
 			//nextPlayer = rounds[idRound].actNext(nextPlayer);
-			int [] vote = {0,0,0,0};
-			try {
-				vote = players[i].vote();
-			}catch(IncorrectVotesException e) {
-				System.out.println("Can't parse input "+e+" into 4 integers");
-			}
+			int [] vote = players[i].vote();
 			rounds[idRound].updateVote(vote);
+			pauser.fakeClear();
 		}
 		goodScore += rounds[idRound].getScore();
 		return rounds[idRound].getLastPlayer();
@@ -141,9 +148,8 @@ public class Board {
 	 * @param p points from 0 to 4
 	 */
 	public void addtionalPoints() {
-		Scanner queryBot = new Scanner( System.in );
-		System.out.println("Input additional points for good guys [0-4]:");
-		int p = Integer.parseInt(queryBot.nextLine());
+		System.out.println("Input additional points for good guys [0-4]:");	
+		int p = pauser.getNextInt();
 		goodScore += p;
 	}
 	public int getScore() {
